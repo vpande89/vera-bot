@@ -113,3 +113,10 @@ def reply(data: dict):
         "action": "send",
         "body": response
     }
+@app.get("/v1/metadata")
+def metadata():
+    return {
+        "team_name": "Vidhi Vera Bot",
+        "model": "gemini-2.5-flash",
+        "version": "1.0"
+    }
