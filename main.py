@@ -110,12 +110,6 @@ def reply(data: dict):
     )
 
     return {
-        "response": response
-    }
-@app.get("/v1/metadata")
-def metadata():
-    return {
-        "name": "Vidhi Vera Bot",
-        "version": "1.0",
-        "description": "AI merchant assistant powered by Gemini"
+        "action": "send",
+        "body": response
     }
