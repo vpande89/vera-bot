@@ -46,7 +46,23 @@ def receive_context(data: dict):
 @app.post("/v1/tick")
 def tick(data: dict):
 
-    merchant = merchants.get("m_001")
+    merchant = next(iter(merchants.values()), None)
+
+    category = None
+    benchmark_text = ""
+
+    if merchant:
+        category_slug = merchant.get("category_slug")
+        category = categories.get(category_slug)
+
+
+
+    if category:
+        peer_stats = category.get("peer_stats", {})
+        avg_ctr = peer_stats.get("avg_ctr")
+
+        if avg_ctr:
+            benchmark_text = f"Category average CTR: {avg_ctr}"
 
     if not merchant:
         return {"actions": []}
@@ -64,6 +80,8 @@ You are Vera, an AI growth assistant for local merchants.
 Merchant:
 {merchant}
 
+{benchmark_text}
+
 Trigger Type:
 {trigger_kind}
 
@@ -72,6 +90,7 @@ Write ONE WhatsApp message.
 Requirements:
 - Address the merchant by name.
 - Use merchant facts.
+- Compare against category benchmarks when relevant.
 - Adapt to the trigger type.
 - Be specific.
 - Ask exactly one follow-up question.
@@ -87,7 +106,7 @@ Return only the message.
         "actions": [
             {
                 "conversation_id": "conv_001",
-                "merchant_id": "m_001",
+                "merchant_id": merchant.get("merchant_id", "unknown"),
                 "trigger_kind": trigger_kind,
                 "body": message
             }
